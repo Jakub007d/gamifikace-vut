@@ -3,6 +3,7 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
+import { Button } from "@rneui/base";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -45,6 +46,20 @@ const StudyCard = () => {
             answer_shown={answerShown}
             setShown={() => setAnswerShown(!answerShown)}
           />
+          <Button
+            onPress={() => {
+              getQuestionPosition(1);
+            }}
+          >
+            Ďalšia
+          </Button>
+          <Button
+            onPress={() => {
+              getQuestionPosition(-1);
+            }}
+          >
+            Prtedošlá
+          </Button>
         </>
       )}
     </View>
