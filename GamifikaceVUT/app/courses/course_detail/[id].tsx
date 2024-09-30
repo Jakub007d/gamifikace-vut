@@ -7,11 +7,12 @@ import { View, Text, Button, StyleSheet } from "react-native";
 
 const CourseDetail = () => {
   const { id } = useLocalSearchParams();
+  const { name } = useLocalSearchParams();
   return (
     <View style={{ display: "flex", flexDirection: "column" }}>
       <NavigationPanel course_name={id}></NavigationPanel>
       <View>
-        <Text>Hello from {id}</Text>
+        <Text>Hello from {name}</Text>
         <ScoreBoard course_id="" user_id=""></ScoreBoard>
       </View>
       <View style={styles.button}>

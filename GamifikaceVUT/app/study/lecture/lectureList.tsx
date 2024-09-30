@@ -1,10 +1,18 @@
+import fetchLecturesForCourse from "@/components/downloaders/fetchLectureForCourse";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
+import { Okruh } from "@/components/props";
 import { Button } from "@rneui/base";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 
 const LectureList = () => {
   const { id } = useLocalSearchParams();
+  const { status: lecture_status, data: lectures } = useQuery({
+    queryKey: ["lectures", id],
+    enabled: !!id,
+    queryFn: () => fetchLecturesForCourse(id[0]!),
+  });
   return (
     <View>
       <NavigationPanel course_name={id}></NavigationPanel>
@@ -13,17 +21,23 @@ const LectureList = () => {
       </View>
 
       <View style={styles.buttonList}>
-        <Button
-          onPress={() =>
-            router.push({
-              pathname: "/study/lecture/studyCard",
-              params: { id: "DvojnyIntegral" },
-            })
-          }
-        >
-          Dvojný Integrál
-        </Button>
-        <Button>Trojný Integrál</Button>
+        {!!id && lecture_status === "success" && (
+          <>
+            {lectures!.map((lecture: Okruh) => (
+              <Button
+                key={lecture.id}
+                onPress={() =>
+                  router.push({
+                    pathname: "/study/lecture/lectureDetail",
+                    params: { lectureID: lecture.id, courseID: id },
+                  })
+                }
+              >
+                {lecture.name}
+              </Button>
+            ))}
+          </>
+        )}
       </View>
     </View>
   );
