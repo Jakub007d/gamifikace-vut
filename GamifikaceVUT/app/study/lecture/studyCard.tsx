@@ -16,7 +16,10 @@ const StudyCard = () => {
   const { status: questions_status, data: questions } = useQuery({
     queryKey: ["questions", lectureID],
     enabled: !!lectureID,
-    queryFn: () => fetchQuestions(lectureID[0]!),
+    queryFn: () =>
+      fetchQuestions(
+        typeof lectureID === "string" ? lectureID : lectureID.join(", ")
+      ),
   });
   const { status: answer_status, data: answers } = useQuery({
     queryKey: ["answers", questions?.[question_position]?.id],
@@ -33,8 +36,10 @@ const StudyCard = () => {
       setPosition(question_position + next_position);
     }
   }
-  function getCorrectAnswer(): Answer {
-    return answers!.find((answer: Answer) => answer.answer_type === true)!;
+  function getCorrectAnswers(): string[] {
+    return answers!
+      .filter((answer: Answer) => answer.answer_type === true) // Filtruje správne odpovede
+      .map((answer: Answer) => answer.text); // Extrahuje text správnych odpovedí
   }
   return (
     <View>
@@ -42,7 +47,7 @@ const StudyCard = () => {
         <>
           <StudyCardWindow
             question={questions[question_position].text}
-            answer={getCorrectAnswer().text}
+            answer={getCorrectAnswers()}
             answer_shown={answerShown}
             setShown={() => setAnswerShown(!answerShown)}
           />

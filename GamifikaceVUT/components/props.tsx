@@ -32,6 +32,8 @@ export interface Okruh {
   /** Názov okruhu*/
   name: string;
   /** Boolean udávajúci či je otázka dostupná*/
+  description: string;
+  /** Popis okruhu*/
   available: boolean;
   /** ID kurzu do ktorého otázka spadá*/
   course: string;
