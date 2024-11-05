@@ -42,6 +42,16 @@ const LectureDetail = () => {
       >
         Quiz
       </Button>
+      <Button
+        onPress={() =>
+          router.push({
+            pathname: "/add_screens/addQuestionScreen",
+            params: { lectureID: lectureID },
+          })
+        }
+      >
+        Pridať Otázku
+      </Button>
     </View>
   );
 };
