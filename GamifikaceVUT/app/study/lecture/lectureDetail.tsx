@@ -1,3 +1,4 @@
+import CourseDetail from "@/app/courses/course_detail/[id]";
 import ComponentWindow from "@/components/ComponentWindow";
 import fetchLectureDetails from "@/components/downloaders/fetchLectureDetails";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
@@ -17,7 +18,7 @@ const LectureDetail = () => {
   });
   return (
     <View>
-      <NavigationPanel course_name={courseID}></NavigationPanel>
+      
       <ComponentWindow>
         {lecture_status === "success" && <Text>{lecture[0]!.description}</Text>}
         {lecture_status === "pending" && <Text>Loading</Text>}
@@ -46,7 +47,7 @@ const LectureDetail = () => {
         onPress={() =>
           router.push({
             pathname: "/add_screens/addQuestionScreen",
-            params: { lectureID: lectureID },
+            params: { lectureID: lectureID, lectureName : lecture![0].name},
           })
         }
       >

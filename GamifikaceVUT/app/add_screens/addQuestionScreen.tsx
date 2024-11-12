@@ -7,19 +7,25 @@ import {
   FormControl,
   WarningOutlineIcon,
   TextArea,
+  Toast,
 } from "native-base";
 import { Button } from "native-base";
 import { Select } from "native-base";
+import { useToast } from 'native-base';
 import { useData } from "./addQuestionScreenComponents/answers_context";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import postQuestionWithAnswers from "@/components/uploaders/uploadQuestion";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function addQuestionScreen() {
   const { answers, addAnswer } = useData();
+  const { lectureID, lectureName } = useLocalSearchParams();
   const [question_name, setQuestionName] = useState("");
   const [question_text, setQuestionText] = useState("");
+  const toast = useToast();
   return (
     <Center>
-      <Text>[NÁZOV LEKCIE]</Text>
+      <Text>{lectureName}</Text>
       <FormControl isInvalid w="75%" maxW="300px">
         <FormControl.Label>Názov Otázky</FormControl.Label>
         <Input
@@ -40,6 +46,7 @@ export default function addQuestionScreen() {
         />
         {answers.map((answer) => (
           <Button
+          style={{ marginTop: 10 }}
             key={answer.id}
             onPress={() => {
               // Add any function you want to execute when this button is pressed
@@ -53,12 +60,23 @@ export default function addQuestionScreen() {
           onPress={() =>
             router.push({
               pathname: "/add_screens/addAnswerScreen",
-              params: { lectureID: "" },
+              params: { lectureID: lectureID},
             })
           }
           style={{ marginTop: 10 }}
         >
           Pridať Odpoveď
+        </Button>
+        <Button
+        style={{ marginTop: 10 }} 
+        onPress={()=>{
+            postQuestionWithAnswers(true,question_name,question_text,String(lectureID),answers)
+            toast.show({description: "Otázka a odpovede úspešne pridané"})
+            addAnswer(null)
+            router.back()
+        }
+        }>
+          Odoslať
         </Button>
       </FormControl>
     </Center>

@@ -15,7 +15,6 @@ const LectureList = () => {
   });
   return (
     <View>
-      <NavigationPanel course_name={id}></NavigationPanel>
       <View style={{ marginHorizontal: "auto", padding: 10 }}>
         <Text>{id}</Text>
       </View>

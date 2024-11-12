@@ -10,9 +10,7 @@ const CourseDetail = () => {
   const { name } = useLocalSearchParams();
   return (
     <View style={{ display: "flex", flexDirection: "column" }}>
-      <NavigationPanel course_name={id}></NavigationPanel>
       <View>
-        <Text>Hello from {name}</Text>
         <ScoreBoard course_id="" user_id=""></ScoreBoard>
       </View>
       <View style={styles.button}>

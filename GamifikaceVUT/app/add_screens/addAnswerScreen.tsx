@@ -25,7 +25,7 @@ export default function addAnswerScreen() {
         <FormControl.Label>Text odpovede</FormControl.Label>
         <Input
           placeholder="Text odpovede"
-          value={answer_text} // Bind the state variable to the Input value
+          value={answer_text}
           onChangeText={(text) => setAnswerText(text)}
         />
         <HStack alignItems="center">

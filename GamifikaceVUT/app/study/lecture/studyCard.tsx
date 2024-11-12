@@ -45,26 +45,34 @@ const StudyCard = () => {
     <View>
       {questions_status === "success" && answer_status === "success" && (
         <>
+        <View style={{height:"60%"}}>
           <StudyCardWindow
             question={questions[question_position].text}
             answer={getCorrectAnswers()}
             answer_shown={answerShown}
             setShown={() => setAnswerShown(!answerShown)}
           />
+          </View>
+          <View style={{marginTop:10}}>
           <Button
+           
             onPress={() => {
               getQuestionPosition(1);
             }}
           >
             Ďalšia
           </Button>
+          </View>
+          <View style={{marginTop:10}}>
           <Button
+           style={{marginTop:10}}
             onPress={() => {
               getQuestionPosition(-1);
             }}
           >
-            Prtedošlá
+            Predošlá
           </Button>
+          </View>
         </>
       )}
     </View>

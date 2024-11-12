@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 // Define the context type
 interface AnswerContentType {
   answers: Answer[];
-  addAnswer: (answer: Answer) => void; // Updated type to add a single Answer
+  addAnswer: (answer: Answer|null) => void; // Updated type to add a single Answer
 }
 
 // Initialize the context with an empty object
@@ -18,8 +18,13 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
   const [answers, setAnswers] = useState<Answer[]>([]);
 
   // Function to add a single answer to the array
-  const addAnswer = (answer: Answer) => {
-    setAnswers((prevAnswers) => [...prevAnswers, answer]);
+  const addAnswer = (answer: Answer|null) => {
+      setAnswers((prevAnswers) => {
+        if (answer === null) {
+          return [];
+        }
+        return [...prevAnswers, answer];
+      });
   };
 
   return (
