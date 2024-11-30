@@ -3,7 +3,8 @@ import ScoreBoard from "@/components/scoreboard_ui/scoreboard";
 import ScoreboardItem from "@/components/scoreboard_ui/scoreboard_item";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { Button } from "native-base";
 
 const CourseDetail = () => {
   const { id } = useLocalSearchParams();
@@ -15,16 +16,26 @@ const CourseDetail = () => {
       </View>
       <View style={styles.button}>
         <Button
-          title="Štúdium"
           onPress={() =>
             router.push({
               pathname: "/study/lecture/lectureList",
               params: { id: id },
             })
           }
-        />
-        <Button title="Výzva" />
-        <Button title="Pridať otázky" />
+        >
+          Štúdium
+        </Button>
+        <Button>Výzva</Button>
+        <Button
+          onPress={() =>
+            router.push({
+              pathname: "/add_screens/addQuestionScreen",
+              params: { lectureID: "-1", lectureName: "-1", courseID: id },
+            })
+          }
+        >
+          Pridať otázky
+        </Button>
       </View>
     </View>
   );

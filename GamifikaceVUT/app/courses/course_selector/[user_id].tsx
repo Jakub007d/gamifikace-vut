@@ -3,7 +3,7 @@ import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import fetchCourseByID from "@/components/downloaders/fetchCourseByID";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { Course } from "@/components/props";
@@ -28,7 +28,6 @@ const HomePage = () => {
   });
   return (
     <View>
-      <NavigationPanel course_name={""} />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         {!!user_id && course_status === "success" && (
           <>
@@ -42,27 +41,9 @@ const HomePage = () => {
                 short_descripstion={course.full_name}
               ></CourseItem>
             ))}
-            <Text>LOADED</Text>
           </>
         )}
-        <Text>Ahoj {user_id}</Text>
-        <CourseItem
-          course_id="IMA1"
-          description="Matematická Analýza 1"
-          grade="2BIT"
-          name="IMA1"
-          short_descripstion="Matematická Analýza 1"
-        />
-        <CourseItem
-          course_id="IMA2"
-          description="Matematická Analýza 2"
-          grade="2BIT"
-          name="IMA2"
-          short_descripstion="Matematická Analýza 2"
-        />
-        <Link href={"/courses/course_detail/IMA1" as const}>IMA1</Link>
         {/* Display the access token retrieved from AsyncStorage */}
-        <Text>{user_id}</Text>
       </ScrollView>
     </View>
   );

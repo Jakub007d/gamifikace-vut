@@ -4,10 +4,17 @@ import fetchLectureDetails from "@/components/downloaders/fetchLectureDetails";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Button } from "@rneui/base";
 import { useQuery } from "@tanstack/react-query";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback } from "react";
 import { View, Text } from "react-native";
 
 const LectureDetail = () => {
+  useFocusEffect(
+    useCallback(() => {
+      // Táto akcia sa vykoná, keď sa užívateľ vráti na túto obrazovku
+      // Vyprazdenie kontextu
+    }, [])
+  );
   const { lectureID, courseID } = useLocalSearchParams();
   const { status: lecture_status, data: lecture } = useQuery({
     queryKey: [lectureID],
@@ -18,7 +25,6 @@ const LectureDetail = () => {
   });
   return (
     <View>
-      
       <ComponentWindow>
         {lecture_status === "success" && <Text>{lecture[0]!.description}</Text>}
         {lecture_status === "pending" && <Text>Loading</Text>}
@@ -47,7 +53,11 @@ const LectureDetail = () => {
         onPress={() =>
           router.push({
             pathname: "/add_screens/addQuestionScreen",
-            params: { lectureID: lectureID, lectureName : lecture![0].name},
+            params: {
+              lectureID: lectureID,
+              lectureName: lecture![0].name,
+              courseID: courseID,
+            },
           })
         }
       >
