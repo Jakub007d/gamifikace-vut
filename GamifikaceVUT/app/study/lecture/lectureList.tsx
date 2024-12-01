@@ -1,7 +1,7 @@
 import fetchLecturesForCourse from "@/components/downloaders/fetchLectureForCourse";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Okruh } from "@/components/props";
-import { Button } from "@rneui/base";
+import { Button } from "native-base";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, router } from "expo-router";
 import { View, Text, Pressable, StyleSheet } from "react-native";
@@ -24,6 +24,7 @@ const LectureList = () => {
           <>
             {lectures!.map((lecture: Okruh) => (
               <Button
+                style={styles.buttonList}
                 key={lecture.id}
                 onPress={() =>
                   router.push({

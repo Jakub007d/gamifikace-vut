@@ -2,17 +2,26 @@ import NavigationPanel from "@/components/navigation/NavigationPanel";
 import ScoreBoard from "@/components/scoreboard_ui/scoreboard";
 import ScoreboardItem from "@/components/scoreboard_ui/scoreboard_item";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "native-base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CourseDetail = () => {
+  const [user_id, setUserID] = useState<string | null>(null); // State for access token
   const { id } = useLocalSearchParams();
   const { name } = useLocalSearchParams();
+  const retrieveUserID = async () => {
+    const userID = await AsyncStorage.getItem("user_id");
+    setUserID(userID);
+  };
   return (
     <View style={{ display: "flex", flexDirection: "column" }}>
       <View>
-        <ScoreBoard course_id="" user_id=""></ScoreBoard>
+        <ScoreBoard
+          course_id={String(id)}
+          user_id={String(user_id)}
+        ></ScoreBoard>
       </View>
       <View style={styles.button}>
         <Button
@@ -25,7 +34,16 @@ const CourseDetail = () => {
         >
           Štúdium
         </Button>
-        <Button>Výzva</Button>
+        <Button
+          onPress={() =>
+            router.push({
+              pathname: "/challenge",
+              params: { id: String(id) },
+            })
+          }
+        >
+          Výzva
+        </Button>
         <Button
           onPress={() =>
             router.push({

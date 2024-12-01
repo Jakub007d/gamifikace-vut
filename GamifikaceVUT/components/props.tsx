@@ -84,9 +84,9 @@ export interface Score {
 /** Rozhranie pre vytvorenie nového bodového stavu*/
 export interface Score_POST {
   /** ID užívateľa*/
-  user_id: string;
+  user_id: String;
   /** ID kurzu*/
-  courseID: string;
+  courseID: String;
   /** Počet bodov*/
   point: number;
 }

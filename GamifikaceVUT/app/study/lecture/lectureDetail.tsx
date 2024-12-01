@@ -2,7 +2,8 @@ import CourseDetail from "@/app/courses/course_detail/[id]";
 import ComponentWindow from "@/components/ComponentWindow";
 import fetchLectureDetails from "@/components/downloaders/fetchLectureDetails";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
-import { Button } from "@rneui/base";
+import styles from "@/components/styles";
+import { Button } from "native-base";
 import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback } from "react";
@@ -28,8 +29,12 @@ const LectureDetail = () => {
       <ComponentWindow>
         {lecture_status === "success" && <Text>{lecture[0]!.description}</Text>}
         {lecture_status === "pending" && <Text>Loading</Text>}
+        {lecture_status === "success" && lecture[0]!.description == "" && (
+          <Text>Ešte nebol poskytnutý popis Okruhu</Text>
+        )}
       </ComponentWindow>
       <Button
+        style={styles.button}
         onPress={() =>
           router.push({
             pathname: "/study/lecture/studyCard",
@@ -40,6 +45,7 @@ const LectureDetail = () => {
         Pamatove Karty
       </Button>
       <Button
+        style={styles.button}
         onPress={() =>
           router.push({
             pathname: "/study/lecture/quizView",
@@ -50,6 +56,7 @@ const LectureDetail = () => {
         Quiz
       </Button>
       <Button
+        style={styles.button}
         onPress={() =>
           router.push({
             pathname: "/add_screens/addQuestionScreen",

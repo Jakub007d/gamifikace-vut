@@ -3,7 +3,7 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button } from "@rneui/base";
+import { Button } from "native-base";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -45,33 +45,32 @@ const StudyCard = () => {
     <View>
       {questions_status === "success" && answer_status === "success" && (
         <>
-        <View style={{height:"60%"}}>
-          <StudyCardWindow
-            question={questions[question_position].text}
-            answer={getCorrectAnswers()}
-            answer_shown={answerShown}
-            setShown={() => setAnswerShown(!answerShown)}
-          />
+          <View style={{ height: "60%" }}>
+            <StudyCardWindow
+              question={questions[question_position].text}
+              answer={getCorrectAnswers()}
+              answer_shown={answerShown}
+              setShown={() => setAnswerShown(!answerShown)}
+            />
           </View>
-          <View style={{marginTop:10}}>
-          <Button
-           
-            onPress={() => {
-              getQuestionPosition(1);
-            }}
-          >
-            Ďalšia
-          </Button>
+          <View style={{ marginTop: 10 }}>
+            <Button
+              onPress={() => {
+                getQuestionPosition(1);
+              }}
+            >
+              Ďalšia
+            </Button>
           </View>
-          <View style={{marginTop:10}}>
-          <Button
-           style={{marginTop:10}}
-            onPress={() => {
-              getQuestionPosition(-1);
-            }}
-          >
-            Predošlá
-          </Button>
+          <View style={{ marginTop: 10 }}>
+            <Button
+              style={{ marginTop: 10 }}
+              onPress={() => {
+                getQuestionPosition(-1);
+              }}
+            >
+              Predošlá
+            </Button>
           </View>
         </>
       )}

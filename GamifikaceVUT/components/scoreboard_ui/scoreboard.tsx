@@ -1,21 +1,51 @@
 import { View, StyleSheet, ScrollView } from "react-native";
 import ScoreboardItem from "./scoreboard_item";
-
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import fetchScore from "../downloaders/fetchScoreboard";
+import { Heading, HStack, Spinner } from "native-base";
+import { Text } from "react-native";
 interface ScoreBoardProps {
   user_id: string;
   course_id: string;
 }
 const ScoreBoard = (props: ScoreBoardProps) => {
-  return (
-    <View style={styles.container}>
-      <ScrollView>
-        <ScoreboardItem score={200} user_name="Jakub Podnicinsky" />
-        <ScoreboardItem score={198} user_name="Igor Podnicinsky" />
-        <ScoreboardItem score={111} user_name="Fero Podnicinsky" />
-        <ScoreboardItem score={90} user_name="Peter Podnicinsky" />
-      </ScrollView>
-    </View>
-  );
+  const { status, data: scores } = useQuery({
+    queryKey: ["score", props.course_id],
+    queryFn: () => fetchScore(props.course_id),
+  });
+  if (status === "success") {
+    return (
+      <>
+        <View style={styles.container}>
+          <ScrollView>
+            {scores.map((score_1, index) => (
+              <>
+                <ScoreboardItem
+                  score={score_1.points}
+                  user_name={score_1.username}
+                  user_id={score_1.user}
+                  current_user={props.user_id}
+                />
+              </>
+            ))}
+          </ScrollView>
+        </View>
+      </>
+    );
+  }
+  if (status === "pending") {
+    return (
+      <View style={styles.container}>
+        <HStack space={2} justifyContent="center">
+          <Spinner accessibilityLabel="Loading posts" />
+          <Heading color="primary.500" fontSize="md">
+            <Text>Loading</Text>
+          </Heading>
+        </HStack>
+      </View>
+    );
+  }
+  if (status === "error") return <View style={styles.container}></View>;
 };
 const styles = StyleSheet.create({
   container: {

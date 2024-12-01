@@ -3,15 +3,27 @@ import { Avatar } from "@rneui/themed";
 interface ScoreboardItem {
   score: number;
   user_name: string;
+  user_id: string;
+  current_user: string;
 }
 function getInitials(name: string): string {
   const splitted = name.split(" ");
-  const initials = splitted[0][0] + splitted[1][0];
-  return initials;
+
+  if (splitted.length > 1 && splitted[1]) {
+    return splitted[0][0] + splitted[1][0];
+  }
+
+  const word = splitted[0];
+  return (word[0] + word[word.length - 1]).toUpperCase();
 }
 const ScoreboardItem = (props: ScoreboardItem) => {
   return (
-    <View>
+    //TODO Fix focus
+    <View
+      style={[
+        props.current_user === props.user_id && { backgroundColor: "green" },
+      ]}
+    >
       <View style={styles.score_item}>
         <Avatar
           size={32}
