@@ -1,20 +1,30 @@
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import ScoreBoard from "@/components/scoreboard_ui/scoreboard";
 import ScoreboardItem from "@/components/scoreboard_ui/scoreboard_item";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "native-base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CourseDetail = () => {
   const [user_id, setUserID] = useState<string | null>(null); // State for access token
   const { id } = useLocalSearchParams();
   const { name } = useLocalSearchParams();
+  const queryClient = useQueryClient();
   const retrieveUserID = async () => {
     const userID = await AsyncStorage.getItem("user_id");
     setUserID(userID);
   };
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({
+        queryKey: ["score", id],
+      });
+      return () => {};
+    }, [id, queryClient]) // Dependencies
+  );
   return (
     <View style={{ display: "flex", flexDirection: "column" }}>
       <View>

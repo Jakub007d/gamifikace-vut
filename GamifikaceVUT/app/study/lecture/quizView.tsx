@@ -3,7 +3,7 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button } from "@rneui/base";
+import { Button } from "native-base";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -80,13 +80,18 @@ const QuizView = () => {
     setScore(correctSelectedAnswers / corectAnswers);
   }
 
+  function getCorrectAnswers(): string[] {
+    return answers!
+      .filter((answer: Answer) => answer.answer_type === true) // Filtruje správne odpovede
+      .map((answer: Answer) => answer.text); // Extrahuje text správnych odpovedí
+  }
   function handleAnswerColor(answer: Answer): string | undefined {
     if (answers_sent) {
       if (
         answer.answer_type == true &&
         selected_answers.some((selected) => selected.id === answer.id)
       ) {
-        return "green";
+        return "#28a745";
       }
       if (
         answer.answer_type == true &&
@@ -103,14 +108,8 @@ const QuizView = () => {
     } else {
       return selected_answers.some((selected) => selected.id === answer.id)
         ? "green"
-        : undefined;
+        : "#00bcd4";
     }
-  }
-
-  function getCorrectAnswers(): string[] {
-    return answers!
-      .filter((answer: Answer) => answer.answer_type === true) // Filtruje správne odpovede
-      .map((answer: Answer) => answer.text); // Extrahuje text správnych odpovedí
   }
 
   return (
@@ -129,30 +128,33 @@ const QuizView = () => {
             {answers.slice(0, 4).map((answer: Answer, index) => (
               <View style={{ padding: 10 }} key={index}>
                 <Button
-                  title={answer.text}
-                  color={handleAnswerColor(answer)}
+                  style={{
+                    backgroundColor: handleAnswerColor(answer), // Dynamically set the background color
+                  }}
                   onPress={
                     !answers_sent
                       ? () => toggleAnswerSelection(answer)
                       : () => {}
                   }
-                />
+                >
+                  {answer.text}
+                </Button>
               </View>
             ))}
           </View>
           <View style={{ padding: 10, height: "10%" }}>
             {!answers_sent && (
               <Button
-                title={answers_sent ? "Dalej" : "Zadaj"}
                 onPress={() => {
                   setAnswersSent(true);
                   validateSelectedAnswers();
                 }}
-              />
+              >
+                {answers_sent ? "Dalej" : "Zadaj"}
+              </Button>
             )}
             {answers_sent && (
               <Button
-                title={answers_sent ? "Dalej" : "Zadaj"}
                 onPress={() => {
                   if (question_position + 1 < questions.length) {
                     setPosition(question_position + 1);
@@ -164,7 +166,9 @@ const QuizView = () => {
                   }
                   setAnswersSent(false);
                 }}
-              />
+              >
+                {answers_sent ? "Dalej" : "Zadaj"}
+              </Button>
             )}
           </View>
         </>

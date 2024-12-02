@@ -5,8 +5,8 @@ import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
 import { Button } from "native-base";
 import { useQuery } from "@tanstack/react-query";
-import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import ScoreUploader from "../uploaders/scoreUploader";
 import fetchChallange from "../downloaders/fetchChallange";
@@ -16,7 +16,7 @@ interface QuizProps {
   is_challange: boolean;
 }
 
-const QuizView = (props: QuizProps) => {
+const QuizViewScreen = (props: QuizProps) => {
   const [question_position, setPosition] = useState(0);
   const [selected_answers, setSelectedAnswer] = useState<Answer[]>([]);
   const [answers_sent, setAnswersSent] = useState(false);
@@ -119,7 +119,16 @@ const QuizView = (props: QuizProps) => {
   const handleSummarry = () => {
     ScoreUploader(props.course_id, score, props.user_id);
   };
-
+  useFocusEffect(
+    useCallback(() => {
+      // Cleanup function that gets called when the screen is blurred (leaving the screen)
+      return () => {
+        console.log("Idem het");
+        // Call the ScoreUploader function when leaving the screen
+        ScoreUploader(props.course_id, score, props.user_id);
+      };
+    }, [props.course_id, String(score), props.user_id]) // Dependencies to trigger the effect when these values change
+  );
   return (
     <View>
       {questions_status === "success" && answer_status === "success" && (
@@ -170,7 +179,7 @@ const QuizView = (props: QuizProps) => {
                     handleSummarry();
                     router.push({
                       pathname: "/study/lecture/sumaryView",
-                      params: { score: score },
+                      params: { score: score, is_challange: "true" },
                     });
                   }
                   setAnswersSent(false);
@@ -186,4 +195,4 @@ const QuizView = (props: QuizProps) => {
   );
 };
 
-export default QuizView;
+export default QuizViewScreen;

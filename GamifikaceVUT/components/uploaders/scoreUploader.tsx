@@ -13,18 +13,15 @@ async function ScoreUploader(
   points: number,
   user_id: String
 ) {
-  const queryClient = useQueryClient();
-  queryClient.invalidateQueries({
-    queryKey: ["score", String(courseID)],
-  });
-  const question: Score_POST = {
+  const score: Score_POST = {
     user_id: user_id,
     courseID: courseID,
     point: points,
   }; // Create the POST requuest
-  const { data } = await axios.post(API_URL + "/score/entry", question, {
+  const { data } = await axios.post(API_URL + "/score/entry", score, {
     headers: { "Content-Type": "application/json" },
   });
+  console.log(data);
 }
 
 export default ScoreUploader;
