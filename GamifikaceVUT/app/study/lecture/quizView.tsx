@@ -3,7 +3,7 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button } from "native-base";
+import { Button, Center, FormControl, Input } from "native-base";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -12,10 +12,12 @@ import { View, Text } from "react-native";
 const QuizView = () => {
   const [question_position, setPosition] = useState(0);
   const [selected_answers, setSelectedAnswer] = useState<Answer[]>([]);
+  const [textCorrectAnswers, setTextCorrectedAnswers] = useState(0);
   const [answers_sent, setAnswersSent] = useState(false);
   const { lectureID, courseID } = useLocalSearchParams();
   const [score, setScore] = useState(0);
   const [correct_answers, setCorrectAnswers] = useState(0);
+  const [answer_text, setAnswerText] = useState("");
   const { status: questions_status, data: questions } = useQuery({
     queryKey: ["questions", lectureID],
     enabled: !!lectureID,
@@ -78,6 +80,7 @@ const QuizView = () => {
       }
     });
     setScore(correctSelectedAnswers / corectAnswers);
+    setScore(score + textCorrectAnswers);
   }
 
   function getCorrectAnswers(): string[] {
@@ -112,68 +115,135 @@ const QuizView = () => {
     }
   }
 
+  function handleTextAnswer(answer: string, input: string) {
+    if (input == answer) {
+      setTextCorrectedAnswers(textCorrectAnswers + 1);
+    }
+  }
+
   return (
-    <View>
-      {questions_status === "success" && answer_status === "success" && (
-        <>
-          <View style={{ height: "40%" }}>
-            <StudyCardWindow
-              question={questions[question_position].text}
-              answer={getCorrectAnswers()}
-              answer_shown={false}
-              setShown={() => {}}
-            />
-          </View>
-          <View style={{ height: "50%", marginTop: 15 }}>
-            {answers.slice(0, 4).map((answer: Answer, index) => (
-              <View style={{ padding: 10 }} key={index}>
-                <Button
+    <Center>
+      <View style={{ width: "90%" }}>
+        {questions_status === "success" && answer_status === "success" && (
+          <>
+            <View style={{ height: "40%" }}>
+              <StudyCardWindow
+                question={questions[question_position].text}
+                answer={getCorrectAnswers()}
+                answer_shown={false}
+                setShown={() => {}}
+              />
+            </View>
+            {answers.length > 1 && (
+              <>
+                <View style={{ height: "50%", marginTop: 15 }}>
+                  {answers.slice(0, 4).map((answer: Answer, index) => (
+                    <View style={{ padding: 10 }} key={index}>
+                      <Button
+                        style={{
+                          backgroundColor: handleAnswerColor(answer), // Dynamically set the background color
+                        }}
+                        onPress={
+                          !answers_sent
+                            ? () => toggleAnswerSelection(answer)
+                            : () => {}
+                        }
+                      >
+                        {answer.text}
+                      </Button>
+                    </View>
+                  ))}
+                </View>
+                <View style={{ padding: 10, height: "10%" }}>
+                  {!answers_sent && (
+                    <Button
+                      onPress={() => {
+                        setAnswersSent(true);
+                        validateSelectedAnswers();
+                      }}
+                    >
+                      {answers_sent ? "Dalej" : "Zadaj"}
+                    </Button>
+                  )}
+                  {answers_sent && (
+                    <Button
+                      onPress={() => {
+                        if (question_position + 1 < questions.length) {
+                          setPosition(question_position + 1);
+                        } else {
+                          router.push({
+                            pathname: "/study/lecture/sumaryView",
+                            params: { score: score },
+                          });
+                        }
+                        setAnswersSent(false);
+                      }}
+                    >
+                      {answers_sent ? "Dalej" : "Zadaj"}
+                    </Button>
+                  )}
+                </View>
+              </>
+            )}
+            {answers.length == 1 && (
+              <>
+                <View
                   style={{
-                    backgroundColor: handleAnswerColor(answer), // Dynamically set the background color
+                    height: "45%",
+                    marginTop: 30,
+                    width: "80%",
+                    marginHorizontal: "auto",
                   }}
-                  onPress={
-                    !answers_sent
-                      ? () => toggleAnswerSelection(answer)
-                      : () => {}
-                  }
                 >
-                  {answer.text}
-                </Button>
-              </View>
-            ))}
-          </View>
-          <View style={{ padding: 10, height: "10%" }}>
-            {!answers_sent && (
-              <Button
-                onPress={() => {
-                  setAnswersSent(true);
-                  validateSelectedAnswers();
-                }}
-              >
-                {answers_sent ? "Dalej" : "Zadaj"}
-              </Button>
+                  <Input
+                    placeholder="Zadaj odpoveď"
+                    isDisabled={answers_sent}
+                    backgroundColor={
+                      answers_sent && answers[0]?.text === answer_text
+                        ? "#90EE90" // Svetlozelená pri správnej odpovedi
+                        : answers_sent && answers[0]?.text !== answer_text
+                        ? "#FF6666" // Svetločervená pri nesprávnej odpovedi
+                        : "transparent"
+                    }
+                    value={answer_text}
+                    onChangeText={(text) => setAnswerText(text)}
+                  />
+                </View>
+                <View style={{ padding: 10, height: "10%" }}>
+                  {!answers_sent && (
+                    <Button
+                      onPress={() => {
+                        setAnswersSent(true);
+                        handleTextAnswer(answers[0].text, answer_text);
+                      }}
+                    >
+                      {answers_sent ? "Dalej" : "Zadaj"}
+                    </Button>
+                  )}
+                  {answers_sent && (
+                    <Button
+                      onPress={() => {
+                        if (question_position + 1 < questions.length) {
+                          setPosition(question_position + 1);
+                        } else {
+                          router.push({
+                            pathname: "/study/lecture/sumaryView",
+                            params: { score: score },
+                          });
+                        }
+                        setAnswersSent(false);
+                      }}
+                    >
+                      {answers_sent ? "Dalej" : "Zadaj"}
+                    </Button>
+                  )}
+                </View>
+              </>
             )}
-            {answers_sent && (
-              <Button
-                onPress={() => {
-                  if (question_position + 1 < questions.length) {
-                    setPosition(question_position + 1);
-                  } else {
-                    router.push({
-                      pathname: "/study/lecture/sumaryView",
-                      params: { score: score },
-                    });
-                  }
-                  setAnswersSent(false);
-                }}
-              >
-                {answers_sent ? "Dalej" : "Zadaj"}
-              </Button>
-            )}
-          </View>
-        </>
-      )}
-    </View>
+          </>
+        )}
+      </View>
+    </Center>
   );
 };
 
