@@ -121,14 +121,15 @@ export default function addQuestionScreen() {
         />
         <FormControl.Label>Text otázky</FormControl.Label>
         <TextArea
-          h={20}
+          h={20} // NativeBase shorthand for height
           placeholder="Text Otázky"
-          w="100%"
-          maxW="300"
-          height="200"
+          w="100%" // NativeBase shorthand for width
+          maxW={300} // Use a number instead of a string for maxW
+          value={question_text} // Bind the state variable
+          onChangeText={(text) => setQuestionText(text)} // Update the state
+          tvParallaxProperties={undefined}
+          onTextInput={undefined}
           autoCompleteType={undefined}
-          value={question_text} // Bind the state variable to the Input value
-          onChangeText={(text) => setQuestionText(text)}
         />
         <View>
           <VStack>
