@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import fetchScore from "../downloaders/fetchScoreboard";
 import { Heading, HStack, Spinner } from "native-base";
 import { Text } from "react-native";
+import React from "react";
 interface ScoreBoardProps {
   user_id: string;
   course_id: string;

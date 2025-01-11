@@ -1,20 +1,11 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Avatar } from "@rneui/themed";
+import getInitials from "../functions/getInitials";
 interface ScoreboardItem {
   score: number;
   user_name: string;
   user_id: string;
   current_user: string;
-}
-function getInitials(name: string): string {
-  const splitted = name.split(" ");
-
-  if (splitted.length > 1 && splitted[1]) {
-    return splitted[0][0] + splitted[1][0];
-  }
-
-  const word = splitted[0];
-  return (word[0] + word[word.length - 1]).toUpperCase();
 }
 const ScoreboardItem = (props: ScoreboardItem) => {
   return (

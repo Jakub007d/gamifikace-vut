@@ -20,44 +20,22 @@ interface TokenResponse {
   refresh: string; // Change based on your API response
 }
 const queryClient = new QueryClient();
-const loginUser = async (user: User): Promise<void> => {
-  try {
-    const response = await axios.post("https://gamifikace.lol/token/", user, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: false,
-    });
-
-    // Clear stored tokens
-    {
-      /*
-      await AsyncStorage.removeItem("access_token");
-    await AsyncStorage.removeItem("refresh_token");
-    await AsyncStorage.removeItem("user_id");
-      */
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+useEffect(() => {
+  const checkLoginStatus = async () => {
+    try {
+      const value = await AsyncStorage.getItem("isLoggedIn");
+      if (value !== null) {
+        setIsLoggedIn(true); // Parse the value if it was stored as a string
+      }
+    } catch (error) {
+      console.error("Error reading value from AsyncStorage:", error);
     }
-    // Store tokens using AsyncStorage
-    await AsyncStorage.setItem("access_token", response.data.access);
-    await AsyncStorage.setItem("refresh_token", response.data.refresh);
-    await AsyncStorage.setItem(
-      "user_id",
-      await fetchUserID(response.data.access)
-    );
+  };
 
-    // Set default authorization header for axios
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${response.data.access}`;
-  } catch (error) {
-    console.error("Error logging in", error);
-    throw error;
-  }
-};
-
+  checkLoginStatus();
+}, []);
 const HomePage = () => {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("Heslo123123!");
   const [isTokenSet, setIsTokenSet] = useState(false); // Track if token is set
   useEffect(() => {
     const checkToken = async () => {
@@ -72,28 +50,19 @@ const HomePage = () => {
     };
     checkToken();
   }, []);
-  if (!isTokenSet) {
-    return (
-      <View style={styles.container}>
-        <Button
-          onPress={async () => {
-            await loginUser({ username, password });
-            router.push({
-              pathname: "/courses/course_selector/[user_id]",
-              params: { user_id: username },
-            });
-          }}
-        >
-          Login
-        </Button>
-      </View>
-    );
-  } else {
-    router.push({
-      pathname: "/courses/course_selector/[user_id]",
-      params: { user_id: username },
-    });
-  }
+  return (
+    <View style={styles.container}>
+      <Button
+        onPress={async () => {
+          router.push({
+            pathname: "/login/login",
+          });
+        }}
+      >
+        Login
+      </Button>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
