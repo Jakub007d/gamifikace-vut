@@ -1,3 +1,4 @@
+/** P/remenovat na models*/
 export interface Question {
   /** ID otázky*/
   id: string;
@@ -105,4 +106,9 @@ export interface Visited_POST {
   userID: string;
   /** ID kurzu*/
   courseID: string;
+}
+export interface Achievement {
+  id: string; // UUID ako reťazec (pre TypeScript ho môžeme reprezentovať ako string)
+  name: string; // Názov achievementu
+  awarded_to: string[]; // Pole ID používateľov, ktorí dostali tento achievement (predpokladáme, že je to array ID ako string)
 }

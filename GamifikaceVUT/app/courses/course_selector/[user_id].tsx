@@ -26,7 +26,7 @@ import fetchUserName from "@/components/downloaders/userNameDownloader";
 const HomePage = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
-  const [user_id, setUserID] = useState<string | null>(null); // State for access token
+  const [user_id, setUserID] = useState<string>(""); // State for access token
   const [isOpen, setOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [visitedCoursesIds, setVisitedCoursesIds] = useState<string[]>([]);
@@ -34,7 +34,7 @@ const HomePage = () => {
   // Function to retrieve the access token from AsyncStorage
   const retrieveUserID = async () => {
     const userID = await AsyncStorage.getItem("user_id");
-    setUserID(userID);
+    setUserID(String(userID));
   };
 
   // Use effect to retrieve the access token when the component mounts
@@ -66,7 +66,7 @@ const HomePage = () => {
               onPress={() => {
                 router.push({
                   pathname: "/user/userProfile",
-                  params: { id: user_id, user_name: user[0].username },
+                  params: { user_id: user_id, user_name: user[0].username },
                 });
               }}
             >
@@ -117,7 +117,7 @@ const HomePage = () => {
 
           <FlatList
             data={allCourses!}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => item.id.toString()}
             renderItem={({ item }) => (
               <HStack
                 px={4}

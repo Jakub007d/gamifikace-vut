@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
+import React from "react";
+import { baseFontSize } from "native-base/lib/typescript/theme/tools";
 
 const QuizView = () => {
   const [question_position, setPosition] = useState(0);
@@ -16,6 +18,7 @@ const QuizView = () => {
   const [answers_sent, setAnswersSent] = useState(false);
   const { lectureID, courseID } = useLocalSearchParams();
   const [score, setScore] = useState(0);
+  const [bad, setBad] = useState(0);
   const [correct_answers, setCorrectAnswers] = useState(0);
   const [answer_text, setAnswerText] = useState("");
   const { status: questions_status, data: questions } = useQuery({
@@ -34,12 +37,18 @@ const QuizView = () => {
 
   useEffect(() => {
     if (answers) {
-      setCorrectAnswers(0);
+      let correct = 0;
+      let badAnswers = 0;
       answers.forEach((answer) => {
         if (answer.answer_type == true) {
+          correct += 1;
           setCorrectAnswers(correct_answers + 1);
+        } else {
+          badAnswers += 1;
         }
       });
+      setCorrectAnswers(correct);
+      setBad(badAnswers);
     }
   }, [answers]);
 
@@ -72,6 +81,8 @@ const QuizView = () => {
     selected_answers.forEach((answer) => {
       if (answer.answer_type) {
         correctSelectedAnswers += 1;
+      } else {
+        setBad(bad + 1);
       }
     });
     answers?.slice(0, 4).forEach((answer) => {
@@ -118,6 +129,8 @@ const QuizView = () => {
   function handleTextAnswer(answer: string, input: string) {
     if (input == answer) {
       setTextCorrectedAnswers(textCorrectAnswers + 1);
+    } else {
+      setBad(bad + 1);
     }
   }
 
@@ -141,7 +154,7 @@ const QuizView = () => {
                     <View style={{ padding: 10 }} key={index}>
                       <Button
                         style={{
-                          backgroundColor: handleAnswerColor(answer), // Dynamically set the background color
+                          backgroundColor: handleAnswerColor(answer),
                         }}
                         onPress={
                           !answers_sent
@@ -173,7 +186,7 @@ const QuizView = () => {
                         } else {
                           router.push({
                             pathname: "/study/lecture/sumaryView",
-                            params: { score: score },
+                            params: { score: score, bad: bad, id: lectureID },
                           });
                         }
                         setAnswersSent(false);
@@ -228,7 +241,11 @@ const QuizView = () => {
                         } else {
                           router.push({
                             pathname: "/study/lecture/sumaryView",
-                            params: { score: score },
+                            params: {
+                              score: score,
+                              bad: bad,
+                              lectureID: lectureID,
+                            },
                           });
                         }
                         setAnswersSent(false);

@@ -32,6 +32,7 @@ export async function loginUser(user: User): Promise<boolean> {
     }
 
     // Store tokens using AsyncStorage
+    await AsyncStorage.removeItem("access_token");
     await AsyncStorage.setItem("access_token", response.data.access);
     await AsyncStorage.setItem("refresh_token", response.data.refresh);
     const userID = await fetchUserID(response.data.access);
