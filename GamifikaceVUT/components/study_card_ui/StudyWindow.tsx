@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Box } from "@/components/ui/box";
+import { Text } from "@/components/ui/text";
 
 interface StudyCardWindowInterface {
   question: string;
@@ -11,23 +13,23 @@ interface StudyCardWindowInterface {
 const StudyCardWindow = (props: StudyCardWindowInterface) => {
   return (
     <Pressable onPress={() => props.setShown()}>
-      <View style={styles.container}>
+      <Box className="bg-gray-200 p-4 rounded-lg w-9/10 mx-auto min-w-[90%] min-h-[90%] mt-5 flex items-center justify-center">
         {props.answer_shown && (
           <View>
             {Array.isArray(props.answer) ? (
               props.answer.map((ans, index) => (
-                <Text key={index} style={{ paddingBottom: 10 }}>
-                  {index + 1}. {ans}
+                <Text size="xl" key={index} style={{ paddingBottom: 10 }}>
+                  {index + 1}) {ans}
                 </Text>
               ))
             ) : (
-              <Text>{props.answer}</Text>
+              <Text size="xl">{props.answer}</Text>
             )}
           </View>
         )}
 
-        {!props.answer_shown && <Text>{props.question}</Text>}
-      </View>
+        {!props.answer_shown && <Text size="xl">{props.question}</Text>}
+      </Box>
     </Pressable>
   );
 };

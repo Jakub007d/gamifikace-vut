@@ -3,13 +3,13 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button, Center, FormControl, Input } from "native-base";
+import { Center, FormControl, Input } from "native-base";
+import { Button, ButtonText } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React from "react";
-import { baseFontSize } from "native-base/lib/typescript/theme/tools";
 
 const QuizView = () => {
   const [question_position, setPosition] = useState(0);
@@ -162,7 +162,7 @@ const QuizView = () => {
                             : () => {}
                         }
                       >
-                        {answer.text}
+                        <ButtonText>{answer.text}</ButtonText>
                       </Button>
                     </View>
                   ))}
@@ -175,7 +175,9 @@ const QuizView = () => {
                         validateSelectedAnswers();
                       }}
                     >
-                      {answers_sent ? "Dalej" : "Zadaj"}
+                      <ButtonText>
+                        {answers_sent ? "Dalej" : "Zadaj"}
+                      </ButtonText>
                     </Button>
                   )}
                   {answers_sent && (
@@ -192,7 +194,9 @@ const QuizView = () => {
                         setAnswersSent(false);
                       }}
                     >
-                      {answers_sent ? "Dalej" : "Zadaj"}
+                      <ButtonText>
+                        {answers_sent ? "Dalej" : "Zadaj"}
+                      </ButtonText>
                     </Button>
                   )}
                 </View>
@@ -215,8 +219,8 @@ const QuizView = () => {
                       answers_sent && answers[0]?.text === answer_text
                         ? "#90EE90" // Svetlozelená pri správnej odpovedi
                         : answers_sent && answers[0]?.text !== answer_text
-                        ? "#FF6666" // Svetločervená pri nesprávnej odpovedi
-                        : "transparent"
+                          ? "#FF6666" // Svetločervená pri nesprávnej odpovedi
+                          : "transparent"
                     }
                     value={answer_text}
                     onChangeText={(text) => setAnswerText(text)}
@@ -230,7 +234,9 @@ const QuizView = () => {
                         handleTextAnswer(answers[0].text, answer_text);
                       }}
                     >
-                      {answers_sent ? "Dalej" : "Zadaj"}
+                      <ButtonText>
+                        {answers_sent ? "Dalej" : "Zadaj"}
+                      </ButtonText>
                     </Button>
                   )}
                   {answers_sent && (
@@ -251,7 +257,9 @@ const QuizView = () => {
                         setAnswersSent(false);
                       }}
                     >
-                      {answers_sent ? "Dalej" : "Zadaj"}
+                      <ButtonText>
+                        {answers_sent ? "Dalej" : "Zadaj"}
+                      </ButtonText>
                     </Button>
                   )}
                 </View>

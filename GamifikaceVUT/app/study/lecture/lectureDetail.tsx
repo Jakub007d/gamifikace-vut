@@ -3,13 +3,15 @@ import ComponentWindow from "@/components/ComponentWindow";
 import fetchLectureDetails from "@/components/downloaders/fetchLectureDetails";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import styles from "@/components/styles";
-import { Button } from "native-base";
+import { Button, ButtonText } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { View, Text } from "react-native";
+import { useNavigation } from "expo-router";
 
 const LectureDetail = () => {
+  const navigation = useNavigation();
   useFocusEffect(
     useCallback(() => {
       // Táto akcia sa vykoná, keď sa užívateľ vráti na túto obrazovku
@@ -17,6 +19,7 @@ const LectureDetail = () => {
     }, [])
   );
   const { lectureID, courseID } = useLocalSearchParams();
+  console.log(lectureID);
   const { status: lecture_status, data: lecture } = useQuery({
     queryKey: [lectureID],
     queryFn: () =>
@@ -24,6 +27,14 @@ const LectureDetail = () => {
         typeof lectureID === "string" ? lectureID : lectureID.join(", ")
       ),
   });
+  useEffect(() => {
+    navigation.setOptions({
+      title:
+        lecture_status === "success"
+          ? (lecture?.[0]?.name ?? "Default Name")
+          : "Loading...",
+    });
+  }, [navigation, lecture]);
   return (
     <View>
       <ComponentWindow>
@@ -35,16 +46,18 @@ const LectureDetail = () => {
       </ComponentWindow>
       <Button
         style={styles.button}
+        className="h-12"
         onPress={() =>
           router.push({
             pathname: "/study/lecture/studyCard",
-            params: { lectureID: lectureID },
+            params: { lectureID: lectureID, lecture_name: lecture![0].name },
           })
         }
       >
-        Pamatove Karty
+        <ButtonText>Pamatove Karty</ButtonText>
       </Button>
       <Button
+        className="h-12"
         style={styles.button}
         onPress={() =>
           router.push({
@@ -53,9 +66,10 @@ const LectureDetail = () => {
           })
         }
       >
-        Quiz
+        <ButtonText>Quiz</ButtonText>
       </Button>
       <Button
+        className="h-12"
         style={styles.button}
         onPress={() =>
           router.push({
@@ -68,7 +82,7 @@ const LectureDetail = () => {
           })
         }
       >
-        Pridať Otázku
+        <ButtonText>Pridať Otázku</ButtonText>
       </Button>
     </View>
   );

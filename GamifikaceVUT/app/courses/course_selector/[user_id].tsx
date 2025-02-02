@@ -7,22 +7,37 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import fetchCourseByID from "@/components/downloaders/fetchCourseByID";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Course } from "@/components/props";
+import { HStack } from "native-base";
+import { Text } from "@/components/ui/text";
+import { Avatar } from "@/components/ui/avatar";
+import * as Progress from "react-native-progress";
 import {
   Actionsheet,
-  Avatar,
-  Button,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+  ActionsheetItem,
+  ActionsheetItemText,
+  ActionsheetIcon,
+} from "@/components/ui/actionsheet";
+import { VStack } from "@/components/ui/vstack";
+import {
   Checkbox,
-  FlatList,
-  HStack,
-  Text,
-} from "native-base";
+  CheckboxIndicator,
+  CheckboxLabel,
+  CheckboxIcon,
+} from "@/components/ui/checkbox";
 import removeVisitedCourse from "@/components/uploaders/removeVisitedCourse";
 import uploadVisitedCourse from "@/components/uploaders/addVisitedCourse";
 import fetchCourses from "@/components/downloaders/fetchAllCourses";
 import getUserNameFromStorage from "@/components/functions/getUserName";
 import getInitials from "@/components/functions/getInitials";
 import fetchUserName from "@/components/downloaders/userNameDownloader";
-
+import { Icon, EditIcon } from "@/components/ui/icon";
+import { Check } from "lucide-react-native";
+import { Button, ButtonText } from "@/components/ui/button";
+import { fetchUserCourseCompletion } from "@/components/downloaders/lectureCompleationDownloader";
 const HomePage = () => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -56,6 +71,10 @@ const HomePage = () => {
     enabled: !!user_id,
     queryFn: () => fetchCourseByID(user_id!),
   });
+  const { status: compleated, data: compleated_list } = useQuery({
+    queryKey: ["compleated"],
+    queryFn: () => fetchUserCourseCompletion(),
+  });
   useEffect(() => {
     navigation.setOptions({
       title: "Navštevované predmety",
@@ -66,23 +85,27 @@ const HomePage = () => {
               onPress={() => {
                 router.push({
                   pathname: "/user/userProfile",
-                  params: { user_id: user_id, user_name: user[0].username },
+                  params: { user_id: user[0].id, user_name: user[0].username },
                 });
               }}
             >
-              <Avatar bg="green.500" mr="1" style={{ marginRight: 10 }}>
-                {getInitials(String(user![0].username))}
+              <Avatar size="md">
+                <Text size="lg" className="text-white">
+                  {getInitials(String(user![0].username))}
+                </Text>
               </Avatar>
             </Pressable>
           )}
           {/* Tlačidlo + */}
           <Button
+            className="bg-white"
             onPress={() => {
               setOpen(true);
             }}
-            color="#000"
           >
-            +
+            <ButtonText size="xl" className="text-black">
+              +
+            </ButtonText>
           </Button>
         </View>
       ),
@@ -110,42 +133,53 @@ const HomePage = () => {
   return (
     <View>
       <Actionsheet isOpen={isOpen} onClose={() => setOpen(false)}>
-        <Actionsheet.Content>
-          <Text fontSize="xl" bold mb={4}>
+        <ActionsheetContent>
+          <Text size="xl" bold={true}>
             Vyberte predmety
           </Text>
 
-          <FlatList
-            data={allCourses!}
-            keyExtractor={(item, index) => item.id.toString()}
-            renderItem={({ item }) => (
-              <HStack
-                px={4}
-                py={2}
-                justifyContent="space-between"
-                alignItems="center"
-                width="100%"
-              >
-                <Text fontSize="md">{item.name}</Text>
-                <Checkbox
-                  isChecked={selectedItems.includes(item.id)}
-                  onChange={() => toggleSelection(item.id)}
-                  aria-label={`Select ${item.name}`}
-                  value={item.id}
-                />
-              </HStack>
-            )}
-          />
+          <ScrollView style={{ maxHeight: 300, width: "100%" }}>
+            <VStack space="md">
+              {allCourses?.map((item) => (
+                <HStack
+                  key={item.id}
+                  px="$4"
+                  py="$2"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  width="100%"
+                  borderBottomWidth={1}
+                  borderColor="$gray300"
+                >
+                  {/* Zarovnanie názvu predmetu doľava */}
+                  <Text size="md">{item.name}</Text>
 
-          <Button mt={4} onPress={() => setOpen(false)}>
-            Potvrdiť výber
+                  {/* Checkbox na pravej strane bez duplicitného názvu */}
+                  <Checkbox
+                    value={item.id}
+                    isChecked={selectedItems.includes(item.id)}
+                    onChange={() => toggleSelection(item.id)}
+                    aria-label={`Select ${item.name}`}
+                  >
+                    <CheckboxIndicator>
+                      <Icon as={Check} size="md" color="white" />
+                    </CheckboxIndicator>
+                  </Checkbox>
+                </HStack>
+              ))}
+            </VStack>
+          </ScrollView>
+
+          <Button onPress={() => setOpen(false)}>
+            <ButtonText>Uložiť výber</ButtonText>
           </Button>
-        </Actionsheet.Content>
+        </ActionsheetContent>
       </Actionsheet>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         {!!user_id &&
           course_status === "success" &&
           allCoursesStatus === "success" &&
+          compleated == "success" &&
           courses!.map((course: Course) => (
             <CourseItem
               key={course.id}
@@ -154,6 +188,8 @@ const HomePage = () => {
               name={course.name}
               grade="TBA"
               short_descripstion={course.full_name}
+              user_name={String(user![0].username)}
+              compleated_list={compleated_list}
             ></CourseItem>
           ))}
         {/* Display the access token retrieved from AsyncStorage */}

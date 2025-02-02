@@ -218,8 +218,8 @@ const QuizViewScreen = (props: QuizProps) => {
                     answers_sent && answers[0]?.text === answer_text
                       ? "#90EE90" // Svetlozelená pri správnej odpovedi
                       : answers_sent && answers[0]?.text !== answer_text
-                      ? "#FF6666" // Svetločervená pri nesprávnej odpovedi
-                      : "transparent"
+                        ? "#FF6666" // Svetločervená pri nesprávnej odpovedi
+                        : "transparent"
                   }
                   value={answer_text}
                   onChangeText={(text) => setAnswerText(text)}

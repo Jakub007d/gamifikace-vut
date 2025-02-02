@@ -3,16 +3,23 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button } from "native-base";
+import { Button, ButtonText } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
+import React from "react";
+import { Box } from "@/components/ui/box";
+import { Avatar } from "@/components/ui/avatar";
+import getInitials from "@/components/functions/getInitials";
+import { useNavigation } from "expo-router";
 
 const StudyCard = () => {
+  const navigation = useNavigation();
+
   const [answerShown, setAnswerShown] = useState(false);
   const [question_position, setPosition] = useState(0);
-  const { lectureID, courseID } = useLocalSearchParams();
+  const { lectureID, lecture_name } = useLocalSearchParams();
   const { status: questions_status, data: questions } = useQuery({
     queryKey: ["questions", lectureID],
     enabled: !!lectureID,
@@ -41,6 +48,11 @@ const StudyCard = () => {
       .filter((answer: Answer) => answer.answer_type === true) // Filtruje správne odpovede
       .map((answer: Answer) => answer.text); // Extrahuje text správnych odpovedí
   }
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Pamäťové karty " + lecture_name,
+    });
+  }, [navigation]);
   return (
     <View>
       {questions_status === "success" && answer_status === "success" && (
@@ -53,25 +65,27 @@ const StudyCard = () => {
               setShown={() => setAnswerShown(!answerShown)}
             />
           </View>
-          <View style={{ marginTop: 10 }}>
+          <Box className="w-[90%] mx-auto flex justify-center items-center">
             <Button
+              className="h-12 w-[100%]"
               onPress={() => {
                 getQuestionPosition(1);
               }}
             >
-              Ďalšia
+              <ButtonText>Ďalšia</ButtonText>
             </Button>
-          </View>
-          <View style={{ marginTop: 10 }}>
+          </Box>
+
+          <Box className="w-[90%] mx-auto flex justify-center items-center mt-2">
             <Button
-              style={{ marginTop: 10 }}
+              className="h-12 w-[100%]"
               onPress={() => {
                 getQuestionPosition(-1);
               }}
             >
-              Predošlá
+              <ButtonText>Predošlá</ButtonText>
             </Button>
-          </View>
+          </Box>
         </>
       )}
     </View>

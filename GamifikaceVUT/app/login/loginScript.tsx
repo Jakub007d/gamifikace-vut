@@ -34,12 +34,12 @@ export async function loginUser(user: User): Promise<boolean> {
     // Store tokens using AsyncStorage
     await AsyncStorage.removeItem("access_token");
     await AsyncStorage.setItem("access_token", response.data.access);
+    console.log(response.data.access);
     await AsyncStorage.setItem("refresh_token", response.data.refresh);
     const userID = await fetchUserID(response.data.access);
     await AsyncStorage.setItem("user_id", userID);
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${response.data.access}`;
+    axios.defaults.headers.common["Authorization"] =
+      `Bearer ${response.data.access}`;
     return true;
   } catch (error) {
     return false;

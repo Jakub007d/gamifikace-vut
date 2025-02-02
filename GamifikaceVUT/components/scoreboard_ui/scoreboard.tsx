@@ -3,7 +3,11 @@ import ScoreboardItem from "./scoreboard_item";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import fetchScore from "../downloaders/fetchScoreboard";
 import { Heading, HStack, Spinner } from "native-base";
-import { Text } from "react-native";
+import { Box } from "@/components/ui/box";
+import { VStack } from "@/components/ui/vstack";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Center } from "@/components/ui/center";
 import React from "react";
 interface ScoreBoardProps {
   user_id: string;
@@ -17,20 +21,38 @@ const ScoreBoard = (props: ScoreBoardProps) => {
   if (status === "success") {
     return (
       <>
-        <View style={styles.container}>
-          <ScrollView>
-            {scores.map((score_1, index) => (
-              <>
-                <ScoreboardItem
-                  score={score_1.points}
-                  user_name={score_1.username}
-                  user_id={score_1.user}
-                  current_user={props.user_id}
-                />
-              </>
-            ))}
-          </ScrollView>
-        </View>
+        <Box className="bg-gray-200 p-4 rounded-lg w-9/10 mx-auto min-w-[90%] mt-5">
+          <Center>
+            <Text size="2xl" bold>
+              Rebríček
+            </Text>
+          </Center>
+          <VStack>
+            {scores.map((score_1, index) => {
+              if (
+                index <= 2 ||
+                String(score_1.user) === String(props.user_id)
+              ) {
+                return (
+                  <ScoreboardItem
+                    key={index}
+                    score={score_1.points}
+                    user_name={score_1.username}
+                    user_id={score_1.user}
+                    current_user={props.user_id}
+                    possition={String(index + 1) + "."}
+                  />
+                );
+              }
+              return null;
+            })}
+          </VStack>
+          <Button>
+            <Text className="text-white" size="lg">
+              Detail
+            </Text>
+          </Button>
+        </Box>
       </>
     );
   }

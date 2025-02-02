@@ -1,27 +1,17 @@
 import { ReactNode } from "react";
 import { View, StyleSheet } from "react-native";
+import { Box } from "./ui/box";
 
 type ComponentWindowProps = {
   children: ReactNode;
 };
 
 const ComponentWindow = ({ children }: ComponentWindowProps) => {
-  return <View style={styles.container}>{children}</View>;
+  return (
+    <Box className="bg-gray-200 p-4 rounded-lg w-9/10 mx-auto min-w-[90%] min-h-[40%] mt-5 flex items-center justify-center">
+      {children}
+    </Box>
+  );
 };
 
 export default ComponentWindow;
-const styles = StyleSheet.create({
-  container: {
-    width: "80%",
-    height: "60%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: 15,
-    justifyContent: "center", // Vertikálne vycentrovanie
-    alignItems: "center", // Horizontálne vycentrovanie
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: "gray",
-    padding: 5,
-  },
-});

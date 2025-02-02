@@ -112,3 +112,7 @@ export interface Achievement {
   name: string; // Názov achievementu
   awarded_to: string[]; // Pole ID používateľov, ktorí dostali tento achievement (predpokladáme, že je to array ID ako string)
 }
+export interface CourseCompletion {
+  course: string;
+  completion_percentage: number;
+}
