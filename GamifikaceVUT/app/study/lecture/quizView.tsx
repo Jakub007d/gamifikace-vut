@@ -6,12 +6,16 @@ import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
 import { Center, FormControl, Input } from "native-base";
 import { Button, ButtonText } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import React from "react";
+import { Check, Square, SquareCheck } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
+import { Box } from "@/components/ui/box";
 
 const QuizView = () => {
+  const navigation = useNavigation();
   const [question_position, setPosition] = useState(0);
   const [selected_answers, setSelectedAnswer] = useState<Answer[]>([]);
   const [textCorrectAnswers, setTextCorrectedAnswers] = useState(0);
@@ -19,6 +23,7 @@ const QuizView = () => {
   const { lectureID, courseID } = useLocalSearchParams();
   const [score, setScore] = useState(0);
   const [bad, setBad] = useState(0);
+  const [bad_index, setBadIndex] = useState<String[]>([]);
   const [correct_answers, setCorrectAnswers] = useState(0);
   const [answer_text, setAnswerText] = useState("");
   const { status: questions_status, data: questions } = useQuery({
@@ -38,19 +43,20 @@ const QuizView = () => {
   useEffect(() => {
     if (answers) {
       let correct = 0;
-      let badAnswers = 0;
       answers.forEach((answer) => {
         if (answer.answer_type == true) {
           correct += 1;
           setCorrectAnswers(correct_answers + 1);
-        } else {
-          badAnswers += 1;
         }
       });
       setCorrectAnswers(correct);
-      setBad(badAnswers);
     }
   }, [answers]);
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Quiz",
+    });
+  }, [navigation]);
 
   const toggleAnswerSelection = (answer: Answer) => {
     // Skontroluje, či už je odpoveď vybraná
@@ -78,11 +84,26 @@ const QuizView = () => {
   function validateSelectedAnswers() {
     var correctSelectedAnswers = 0;
     var corectAnswers = 0;
+    if (selected_answers.length == 0) {
+      setBad(bad + 1);
+      console.log("question_position:" + question_position);
+      setBadIndex((prevBadIndex) =>
+        prevBadIndex.includes(String(question_position))
+          ? prevBadIndex
+          : [...prevBadIndex, String(question_position)]
+      );
+      return;
+    }
     selected_answers.forEach((answer) => {
       if (answer.answer_type) {
         correctSelectedAnswers += 1;
       } else {
         setBad(bad + 1);
+        setBadIndex((prevBadIndex) =>
+          prevBadIndex.includes(String(question_position))
+            ? prevBadIndex
+            : [...prevBadIndex, String(question_position)]
+        );
       }
     });
     answers?.slice(0, 4).forEach((answer) => {
@@ -129,9 +150,14 @@ const QuizView = () => {
   function handleTextAnswer(answer: string, input: string) {
     if (input == answer) {
       setTextCorrectedAnswers(textCorrectAnswers + 1);
-    } else {
-      setBad(bad + 1);
+      return;
     }
+    setBad(bad + 1);
+    setBadIndex((prevBadIndex) =>
+      prevBadIndex.includes(String(question_position))
+        ? prevBadIndex
+        : [...prevBadIndex, String(question_position)]
+    );
   }
 
   return (
@@ -153,16 +179,33 @@ const QuizView = () => {
                   {answers.slice(0, 4).map((answer: Answer, index) => (
                     <View style={{ padding: 10 }} key={index}>
                       <Button
-                        style={{
-                          backgroundColor: handleAnswerColor(answer),
-                        }}
+                        className="h-12"
+                        style={
+                          answers_sent
+                            ? {
+                                backgroundColor: handleAnswerColor(answer),
+                              }
+                            : {}
+                        }
                         onPress={
                           !answers_sent
                             ? () => toggleAnswerSelection(answer)
                             : () => {}
                         }
                       >
-                        <ButtonText>{answer.text}</ButtonText>
+                        <View className="flex-row items-center justify-between w-full">
+                          {selected_answers.some(
+                            (selected) => selected.id === answer.id
+                          ) ? (
+                            <Icon as={SquareCheck} size="md" color="white" />
+                          ) : (
+                            <Icon as={Square} size="md" color="white" />
+                          )}
+
+                          <ButtonText className="absolute left-1/2 -translate-x-1/2 text-white">
+                            {answer.text}
+                          </ButtonText>
+                        </View>
                       </Button>
                     </View>
                   ))}
@@ -170,6 +213,7 @@ const QuizView = () => {
                 <View style={{ padding: 10, height: "10%" }}>
                   {!answers_sent && (
                     <Button
+                      className="h-12"
                       onPress={() => {
                         setAnswersSent(true);
                         validateSelectedAnswers();
@@ -182,13 +226,19 @@ const QuizView = () => {
                   )}
                   {answers_sent && (
                     <Button
+                      className="h-12"
                       onPress={() => {
                         if (question_position + 1 < questions.length) {
                           setPosition(question_position + 1);
                         } else {
                           router.push({
                             pathname: "/study/lecture/sumaryView",
-                            params: { score: score, bad: bad, id: lectureID },
+                            params: {
+                              score: score,
+                              bad: bad,
+                              lectureID: lectureID,
+                              bad_index: String(bad_index),
+                            },
                           });
                         }
                         setAnswersSent(false);
@@ -251,6 +301,7 @@ const QuizView = () => {
                               score: score,
                               bad: bad,
                               lectureID: lectureID,
+                              bad_index: String(bad_index),
                             },
                           });
                         }

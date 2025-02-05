@@ -116,3 +116,10 @@ export interface CourseCompletion {
   course: string;
   completion_percentage: number;
 }
+
+export interface SummaryViewQuestion {
+  question: Question;
+  answers: Answer[];
+  selectedAnswers: Answer[];
+  isTextAnswer: boolean;
+}

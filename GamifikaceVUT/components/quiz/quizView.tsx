@@ -3,13 +3,15 @@ import fetchQuestions from "@/components/downloaders/fetchQuestions";
 import NavigationPanel from "@/components/navigation/NavigationPanel";
 import { Answer } from "@/components/props";
 import StudyCardWindow from "@/components/study_card_ui/StudyWindow";
-import { Button, Input } from "native-base";
+import { Input } from "native-base";
+import { Button, ButtonText } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import ScoreUploader from "../uploaders/scoreUploader";
 import fetchChallange from "../downloaders/fetchChallange";
+import React from "react";
 interface QuizProps {
   user_id: String;
   course_id: String;
@@ -164,7 +166,7 @@ const QuizViewScreen = (props: QuizProps) => {
                         backgroundColor: handleAnswerColor(answer), // Dynamically set the background color
                       }}
                     >
-                      {answer.text}
+                      <ButtonText>{answer.text}</ButtonText>
                     </Button>
                   </View>
                 ))}
@@ -177,7 +179,7 @@ const QuizViewScreen = (props: QuizProps) => {
                       validateSelectedAnswers();
                     }}
                   >
-                    {answers_sent ? "Dalej" : "Zadaj"}
+                    <ButtonText>{answers_sent ? "Dalej" : "Zadaj"}</ButtonText>
                   </Button>
                 )}
                 {answers_sent && (
@@ -195,7 +197,7 @@ const QuizViewScreen = (props: QuizProps) => {
                       setAnswersSent(false);
                     }}
                   >
-                    {answers_sent ? "Dalej" : "Zadaj"}
+                    <ButtonText>{answers_sent ? "Dalej" : "Zadaj"}</ButtonText>
                   </Button>
                 )}
               </View>
@@ -233,7 +235,7 @@ const QuizViewScreen = (props: QuizProps) => {
                       handleTextAnswer(answers[0].text, answer_text);
                     }}
                   >
-                    {answers_sent ? "Dalej" : "Zadaj"}
+                    <ButtonText>{answers_sent ? "Dalej" : "Zadaj"}</ButtonText>
                   </Button>
                 )}
                 {answers_sent && (
@@ -250,7 +252,7 @@ const QuizViewScreen = (props: QuizProps) => {
                       setAnswersSent(false);
                     }}
                   >
-                    {answers_sent ? "Dalej" : "Zadaj"}
+                    <ButtonText>{answers_sent ? "Dalej" : "Zadaj"}</ButtonText>
                   </Button>
                 )}
               </View>
