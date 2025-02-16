@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jakub007d.GamifikaceVUT"
     },
     "android": {
       "useCleartextTraffic": true,
@@ -41,6 +42,7 @@
       "eas": {
         "projectId": "2d0b4f02-62de-45ca-bd1f-0fd1e0e7d617"
       }
-    }
+    },
+    "owner": "jakub007d"
   }
 }
